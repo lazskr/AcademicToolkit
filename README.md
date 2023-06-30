@@ -4,7 +4,7 @@
 The academic toolkit provides students and academic researchers with tools that aid in any form of report or academic writing. 
 This project was written in Python 3. 
 
-# Python version?
+# Python version:
 3.11.4 (As of June 30 2023)
 
 # How to execute and run the Academic Toolkit: 
