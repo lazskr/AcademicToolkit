@@ -1,6 +1,6 @@
 # ACADEMIC TOOLKIT
 
-# What is this code about?
+# What is the project purpose?
 The academic toolkit provides students and academic researchers with tools that aid in any form of report or academic writing. 
 This project was written in Python 3. 
 
