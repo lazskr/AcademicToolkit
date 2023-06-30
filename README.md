@@ -10,7 +10,7 @@ This project was written in Python 3.
 # How to execute and run the Academic Toolkit? 
 In the terminal, simply input: python toolkit.py 
 
-# Motivation behind this project? 
+# Motivation behind this project:
 * Initial motivation was to automate the removal of intext references from text to obtain a pure word count immediately (for reports and assignments)
 * I decided that there were additional features that I wanted to use when I was writing academic reports or university assessments 
 * The first feature that I want to add was to automate the process of producing references for any source (in Harvard style with The University of Adelaide's guidelines)
