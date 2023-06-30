@@ -7,7 +7,7 @@ This project was written in Python 3.
 # Python version?
 3.11.4 (As of June 30 2023)
 
-# How to execute and run the Academic Toolkit? 
+# How to execute and run the Academic Toolkit: 
 In the terminal, simply input: python toolkit.py 
 
 # Motivation behind this project:
