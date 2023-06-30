@@ -13,7 +13,7 @@ In the terminal, simply input: python toolkit.py
 # Motivation behind this project? 
 * Initial motivation was to automate the removal of intext references from text to obtain a pure word count immediately (for reports and assignments)
 * I decided that there were additional features that I wanted to use when I was writing academic reports or university assessments 
-* The first and second main feature that I want to add was to automate the proecess of producing references for any source (in Harvard style with The University of Adelaide's guidelines)
+* The first feature that I want to add was to automate the process of producing references for any source (in Harvard style with The University of Adelaide's guidelines)
 * Following this, I then wanted to have the option to convert text to speech in order to hear how any text sounds when it is read aloud (e.g., for speeches or for checking grammer and punctuation in text)
 * Finaly, I also wanted to implement a feature to allow for converstion from speech to text in order to get transcripts for videos such as lectures or podcasts
 
