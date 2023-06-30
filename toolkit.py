@@ -1,15 +1,9 @@
 import re #module which works with regular expressions 
-import os 
+import os #user can interact with the operating systen 
+from gtts import gTTS #gTTS tool from gtts library used for text to speech
+import requests #used to send a post request to openAI's API and to recieve a response back 
 
-#Academic toolbox
-#reference guide from UofA - https://www.adelaide.edu.au/library/ua/media/4063/library-qrg-harvard-referencing.pdf
-
-#remove intext (good for academics)
-#speech to text (openAI API) & text to speech (geeks - https://www.geeksforgeeks.org/convert-text-speech-python/)
-#referencing using Adelaide Uni's standard (from input, you get the output)
-
-#python main.py
-
+#function which creates a reference and intext reference for the user for the type of journal article reference that they selected 
 def journal_articles(passed_num): 
     if passed_num == 1:
         first_name = input("Please enter author's first name: ")
@@ -174,6 +168,8 @@ def journal_articles(passed_num):
         return intext,reference
         
 
+
+#function which creates a reference and intext reference for the user for the type of book reference that they selected 
 def books(passed_num):
     #8 to 18
     if passed_num == 8:
@@ -331,6 +327,15 @@ def books(passed_num):
         place_of_publication = input("Please enter the place of publication (City): ")
         pages = input("Please enter the page numbers that are being covered: ")
         
+        if int(edition) == 1:
+            type = 'st'
+        elif int(edition) == 2:
+            type = 'nd'
+        elif int(edition) == 3:
+            type = 'rd'
+        else:
+            type = 'th'
+        
         cur_page = int(pages)
         if cur_page > 10:
             p_or_pp = 'pp.'
@@ -338,7 +343,7 @@ def books(passed_num):
             p_or_pp = 'p.'
         
         intext = '(' + family_name + ' ' + year + ', ' + 'p x.)'
-        reference = family_name + ', ' + first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + edition + 'th' + ' edition, ' + publisher + ', ' + place_of_publication + '.'
+        reference = family_name + ', ' + first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + edition + type + ' edition, ' + publisher + ', ' + place_of_publication + '.'
         return intext,reference
     
     elif passed_num == 15:
@@ -420,6 +425,9 @@ def books(passed_num):
         reference = family_name + ', ' + first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + 'trans. ' + translator_first_name[0] + ' ' + translator_family_name  + ', '  + publisher + ', ' + place_of_publication + '.'
         return intext,reference
 
+
+
+#function which creates a reference and intext reference for the user for the type of conference publication reference that they selected 
 def conference_publications(passed_num):
     if passed_num == 19:
         first_name = input("Please enter the author's first name: ")
@@ -489,6 +497,9 @@ def conference_publications(passed_num):
         reference = family_name + ', ' + first_name[0] + ' ' + year + ', ' + "'" + paper_title + "'" + ', paper presented at ' + "\x1B[3m" + conference_title + "\x1B[0m" + ', ' + conference_location + ', ' + date + '.'
         return intext,reference
 
+
+
+#function which creates a reference and intext reference for the user for the type of newspaper/magazine reference that they selected 
 def newspaper_or_magazine(passed_num):
     if passed_num == 22:
         
@@ -590,47 +601,540 @@ def newspaper_or_magazine(passed_num):
             
         return intext, reference
 
+
+
+#function which creates a reference and intext reference for the user for the type of reference work that they selected 
 def reference_work(passed_num):
     if passed_num == 25:
-        author = input("Please enter the author of the book: ")
-        title = input("Please enter the title of the book: ")
-        year = input("Please enter the year of publication of the book: ")
+        title = input("Please enter the title of the dictionary: ")
+        year = input("Please enter the year that the dictionary was published: ")
+        edition = input("Please enter the edition of the dictionary: ")
+        volume = input("Please input the volume of the dictionary: ")
+        publisher = input("Please enter the publisher of the dictionary: ")
+        publisher_location = input("Please enter the location of the publisher: ")
         
-        
-        cur_page = int(pages)
-        p_or_pp = 'null'
-        if cur_page > 10:
-            p_or_pp = 'pp.'
+        if int(edition) == 1:
+            type = 'st'
+        elif int(edition) == 2:
+            type = 'nd'
+        elif int(edition) == 3:
+            type = 'rd'
         else:
-            p_or_pp = 'p.'
+            type = 'th'
             
-        
+        intext = '(' + "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ', p. x)'
+        reference =  "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ', ' + edition + type + ' edn, ' + 'vol. ' + volume + ', ' + publisher + ', ' + publisher_location + '.'
+       
         return intext,reference
         
     elif passed_num == 26:
-        pass
+        author_family_name = input("Please enter the family name of the author: ")
+        title = input("Please enter the title of the book: ")
+        translor_first_name = input("Please enter the translator's first name: ")
+        translator_family_name = input("Please enter the translator's family name: ")
+        publisher = input("Please enter the name of the publisher: ")
+        publication_location = input("Please enter the location of the publisher: ")
+        publication_year = input("Please enter the year of publication: ")
+        book_number = input("Please enter the book number: ")
+        line_numbers = input("Please enter the line numbers that are being covered: ")
+        
+        intext = '(' + author_family_name + ' ' + title + ', ' + book_number + '.' + line_numbers + ')'
+        reference = author_family_name + '.' + ' ' + "\x1B[3m" + title + "\x1B[0m" + ', translated by ' + translor_first_name[0] + '.' + ' ' + translator_family_name + '. ' + publication_location + '. ' + publisher + '. ' + publication_year + '.'
+            
+        return intext,reference
+    
     elif passed_num == 27:
-        pass
+        authors_first_name = input("Please enter the first name of the author: ")
+        authors_family_name = input("Please enter the family name of the author: ")
+        title = input("Please enter the title of the encyclopedia: ")
+        year = input("Please enter the year that the encyclopedia was published: ")
+        edition = input("Please enter the edition of the encyclopedia: ")
+        publisher = input("Please enter the publisher of the encyclopedia: ")
+        publisher_location = input("Please enter the location of the publisher: ")
+        
+        if int(edition) == 1:
+            type = 'st'
+        elif int(edition) == 2:
+            type = 'nd'
+        elif int(edition) == 3:
+            type = 'rd'
+        else:
+            type = 'th'
+            
+        intext = '(' + "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ', p. x)'
+        reference =  authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + edition + type + ' edn, ' + ', ' + publisher + ', ' + publisher_location + '.'
+       
+        return intext,reference
+    
     else: #passed_num == 28 
+        title = input("Please enter the title of the encyclopedia: ")
+        year = input("Please enter the year that the encyclopedia was published: ")
+        edition = input("Please enter the edition of the encyclopedia: ")
+        volume = input("Please input the volume of the encyclopedia: ")
+        publisher = input("Please enter the publisher of the encyclopedia: ")
+        publisher_location = input("Please enter the location of the publisher: ")
+        
+        if int(edition) == 1:
+            type = 'st'
+        elif int(edition) == 2:
+            type = 'nd'
+        elif int(edition) == 3:
+            type = 'rd'
+        else:
+            type = 'th'
+            
+        intext = '(' + "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ', p. x)'
+        reference =  "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ', ' + edition + type + ' edn, ' + 'vol. ' + volume + ', ' + publisher + ', ' + publisher_location + '.'
+       
+        return intext,reference
         
 
+
+#function which creates a reference and intext reference for the user for the type of dataset reference that they selected     
 def dataset(passed_num):
-    pass
+    if passed_num == 29:
+        choice = input("Is there an author present on the dataset? Enter 1 for yes and 2 for no: ")
+        if choice == 1:
+            authors_first_name = input("Please enter the first name of the author: ")
+            authors_family_name = input("Please enter the family name of the author: ")
+        else: 
+            authoring_body = input("Please enter the name of the authoring body (e.g., company or department): ")
+            
+        year = input("Please enter the year that the dataset was published: ")
+        title = input("Please enter the title of the dataset: ")
+        doi = input("Please enter the DOI of the datset: ")
+        
+        if choice == 1:
+            intext = '(' + authors_family_name + ' ' + year + ')'
+            reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + 'DOI: ' + doi + '.'
+        else: 
+            intext = '(' + authoring_body + ' ' + year + ')'
+            reference = authoring_body + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + 'DOI: ' + doi + '.'
+    
+        return intext, reference 
+                
+    else: #passed_num == 30
+        choice = input("Is there an author present on the dataset? Enter 1 for yes and 2 for no: ")
+        if choice == 1:
+            authors_first_name = input("Please enter the first name of the author: ")
+            authors_family_name = input("Please enter the family name of the author: ")
+        else: 
+            authoring_body = input("Please enter the name of the authoring body (e.g., company or department): ")
+            
+        year = input("Please enter the year that the dataset was published: ")
+        title = input("Please enter the title of the dataset: ")
+        date = input("Please enter the date you viewed the dataset (dd mm year format): ")
+        url = input("Please enter the URL of the dataset: ")
+        
+        if choice == 1:
+            intext = '(' + authors_family_name + ' ' + year + ')'
+            reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + 'viewed ' + date + ', ' + '<' + url + '>.'
+        else: 
+            intext = '(' + authoring_body + ' ' + year + ')'
+            reference = authoring_body + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + 'viewed ' + date + ', ' + '<' + url + '>.'
+    
+        return intext, reference 
+        
+        
+        
+#function which creates a reference and intext reference for a website          
+def webpage(passed_num): #passed_num == 31
+    choice = input("Is there an author present on the webpage? Enter 1 for yes and 2 for no: ")
+    if choice == 1:
+        authors_first_name = input("Please enter the first name of the author: ")
+        authors_family_name = input("Please enter the family name of the author: ")
+    else: 
+        authoring_body = input("Please enter the name of the authoring body (e.g., company or department): ")
+        
+    year = input("Please input the year that the webpage was published or last updated (if there is no year use 'n.d.'): ")
+    title = input("Please enter the title of the webpage: ")
+    website_title = input("Please enter the title of the webpage: ")
+    date = input("Please enter the date you viewed the webpage (dd mm year format): ")
+    url = input("Please enter the URL of the webpage: ")
+    
+    if choice == 1:
+        intext = '(' + authors_family_name + ' ' + year + ')'
+        reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + website_title + ', ' + 'viewed ' + date + ', ' + '<' + url + '>.'
+    else: 
+        intext = '(' + authoring_body + ' ' + year + ')'
+        reference = authoring_body + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + website_title + ', ' + 'viewed ' + date + ', ' + '<' + url + '>.'
+        
+    return intext, reference 
 
-def webpage(passed_num):
-    pass
 
+
+#function which creates a reference and intext reference for the user for the type of social media reference that they selected 
 def social_media(passed_num):
-    pass
+    if passed_num == 32:
+        choice = input("Enter 1 to enter the author's first and family name. Enter 2 to enter the author's username: ")
+        if choice == 1:
+            authors_first_name = input("Please enter the first name of the author of the blog: ")
+            authors_family_name = input("Please enter the family name of the author: ")
+        else: 
+            username = input("Please enter the username of the user who runs the blog of the blog: ")
+            
+        blog_name = input("Please enter the blog's name: ")
+        year = input("What year was the blog post published: ")
+        date = input("Please enter the date you viewed the webpage (dd mm year format): ")
+        url = input("Please enter the URL of the webpage: ")
+            
+        if choice == 1:
+            intext = '(' + authors_family_name + ' ' + year + ')'
+            reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + blog_name + "\x1B[0m" + ', blog, viewed' + date + ', ' + '<' + url + '>.'
+        else:
+            intext = '(' + username + ' ' + year + ')'
+            reference = username + ' ' + year + ', ' + "\x1B[3m" + blog_name + "\x1B[0m" + ', blog, viewed' + date + ', ' + '<' + url + '>.'
+            
+        return intext, reference    
 
+    elif passed_num == 33:
+        choice = input("Enter 1 to enter the author's first and family name. Enter 2 to enter the author's username: ")
+        if choice == 1:
+            authors_first_name = input("Please enter the first name of the author of the blog post: ")
+            authors_family_name = input("Please enter the family name of the author of the blog post: ")
+        else: 
+            username = input("Please enter the username of the user who runs the blog: ")
+            
+        blog_name = input("Please enter the blog's name: ")
+        blog_post = input("Please enter the name of the blog post: ")
+        year = input("What year was the blog post published: ")
+        date = input("Please enter the date you viewed the webpage (dd mm year format): ")
+        url = input("Please enter the URL of the webpage: ")
+            
+        if choice == 1:
+            intext = '(' + authors_family_name + ' ' + year + ')'
+            reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "'" + blog_post + "'" + ', ' + "\x1B[3m" + blog_name + "\x1B[0m" + ', blog post, viewed' + date + ', ' + '<' + url + '>.'
+        else:
+            intext = '(' + username + ' ' + year + ')'
+            reference = username + ' ' + year + ', ' + "'" + blog_post + "'" + ', ' + "\x1B[3m" + blog_name + "\x1B[0m" + ', blog post, viewed' + date + ', ' + '<' + url + '>.'
+            
+        return intext, reference 
+        
+    elif passed_num == 34:
+        choice = input("Enter 1 to enter the author's first and family name. Enter 2 to enter the author's username: ")
+        if choice == 1:
+            authors_first_name = input("Please enter the first name of the author of the Facebook post: ")
+            authors_family_name = input("Please enter the family name of the author of the Facebook post: ")
+        else: 
+            username = input("Please enter the username of the Facebook user: ")
+            
+        facebook_post = input("Please enter the name of the Facebook post: ")
+        year = input("What year was the Facebook post published: ")
+        date = input("Please enter the date you viewed the Facebook post (dd mm year format): ")
+        url = input("Please enter the URL of the Facebook post: ")
+            
+        if choice == 1:
+            intext = '(' + authors_family_name + ' ' + year + ')'
+            reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + "\x1B[3m" + facebook_post + "\x1B[0m" + ', Facebook, viewed' + date + ', ' + '<' + url + '>.'
+        else:
+            intext = '(' + username + ' ' + year + ')'
+            reference = username + ' ' + year + ', ' + "\x1B[3m" + facebook_post + "\x1B[0m" + ', Facebook, viewed' + date + ', ' + '<' + url + '>.'
+            
+        return intext, reference 
+        
+    else: #passed_num == 35 
+        choice = input("Enter 1 to enter the author's first and family name. Enter 2 to enter the author's username: ")
+        if choice == 1:
+            authors_first_name = input("Please enter the first name of the author of the tweet: ")
+            authors_family_name = input("Please enter the family name of the author of the tweet: ")
+        else: 
+            username = input("Please enter the username of the Twitter user: ")
+            
+        tweet = input("Please enter the name of the tweet: ")
+        year = input("What year was the Twitter post published: ")
+        date = input("Please enter the date you viewed the Twitter post (dd mm year format): ")
+        url = input("Please enter the URL of the Twitter post: ")
+            
+        if choice == 1:
+            intext = '(' + authors_family_name + ' ' + year + ')'
+            reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + "\x1B[3m" + tweet + "\x1B[0m" + ', Twitter, viewed' + date + ', ' + '<' + url + '>.'
+        else:
+            intext = '(' + username + ' ' + year + ')'
+            reference = username + ' ' + year + ', ' + "\x1B[3m" + tweet + "\x1B[0m" + ', Twitter, viewed' + date + ', ' + '<' + url + '>.'
+            
+        return intext, reference 
+
+
+
+#function which creates a reference and intext reference for the user for the type of audio visual reference that they selected 
 def audio_visual(passed_num):
-    pass
+    if passed_num == 36:
+        choice = input("Enter 1 to enter the author's first and family name. Enter 2 to enter the author's username: ")
+        if choice == 1:
+            authors_first_name = input("Please enter the first name of the author of the YouTube video: ")
+            authors_family_name = input("Please enter the family name of the author of the YouTube video: ")
+        else: 
+            username = input("Please enter the username of the YouTube user: ")
+            
+        youtube_video = input("Please enter the name of the YouTube video: ")
+        year = input("What year was the YouTube video published: ")
+        date = input("Please enter the date you viewed the YouTube video (dd mm year format): ")
+        url = input("Please enter the URL of the YouTube video: ")
+            
+        if choice == 1:
+            intext = '(' + authors_family_name + ' ' + year + ')'
+            reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + "\x1B[3m" + youtube_video + "\x1B[0m" + ', YouTube, viewed' + date + ', ' + '<' + url + '>.'
+        else:
+            intext = '(' + username + ' ' + year + ')'
+            reference = username + ' ' + year + ', ' + "\x1B[3m" + youtube_video + "\x1B[0m" + ', YouTube, viewed' + date + ', ' + '<' + url + '>.'
+            
+        return intext, reference 
+        
+    elif passed_num == 37:
+        title = input("Please enter the title of the television show: ")
+        year = input("What year was the television show filmed: ")
+        broadcaster = input("What is the name of the broadcaster: ")
+        place = input("Where was the television show filmed: ")
+        date = input("What date was the television show filmed (dd mm format): ")
+        
+        intext = '(' + title + ' ' + year + ')'
+        reference = "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ', television programme, ' + broadcaster + ', ' + place + ', ' + date + '.'
+        
+        return intext, reference 
+        
+    elif passed_num == 38:
+        title = input("Please enter the title of the television show: ")
+        episode = input("Please enter the title of the episode: ")
+        year = input("What year was the television show filmed: ")
+        broadcaster = input("What is the name of the broadcaster: ")
+        place = input("Where was the television show filmed: ")
+        
+        intext = '(' + title + ' ' + year + ')'
+        reference = "\x1B[3m" + episode + "\x1B[0m" + ' ' + year + ', television series episode, in ' + title + ', ' + broadcaster + ', ' + place + '.'
+        
+        return intext, reference 
+    
+    elif passed_num == 39:
+        choice = input("If this is for a video enter 1, enter 2 for film and enter 3 for dvd: ")
+        if choice == 1:
+            choice = 'video'
+        elif choice == 2: 
+            choice = 'film'
+        else: 
+            choice = 'dvd'
+            
+        title = input("Please input the title for the " + choice + ':')
+        year = input("Please enter the year that the " + choice + ' was published: ')
+        producer = input("Please enter the producer of the " + choice + ':')
+        publisher_location = input("Please enter the year that the " + choice + ' was published: ')
+        
+        intext = '(' + "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ')'
+        reference = "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ', ' + choice + ', ' + producer + ', ' + publisher_location + '.'
+        
+        return intext,reference
+        
+    elif passed_num == 40: 
+        choice = input("Enter 1 to enter the author's first and family name. Enter 2 to enter the podcast's name: ")
+        if choice == 1:
+            authors_first_name = input("Please enter the first name of the author of the YouTube video: ")
+            authors_family_name = input("Please enter the family name of the author of the YouTube video: ")
+        else: 
+            podcast_name = input("Please enter the podcast's name: ")
+            
+        podcast_episode = input("Please enter the podcast's episode name: ")
+        year = input("What year was the podcast episode published: ")
+        date = input("Please enter the date the podcast was published (dd mm year format): ")
+        date_viewed = input("Please enter the date that you viewed the podcast")
+        url = input("Please enter the URL of the podcast: ")
+            
+        if choice == 1:
+            intext = '(' + authors_family_name + ' ' + year + ')'
+            reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + podcast_episode + "\x1B[0m" + ', podcast, ' + date + ', viewed ' + date_viewed + ', ' '<' + url + '>.'
+        else:
+            intext = '(' + podcast_name + ' ' + year + ')'
+            reference = podcast_name + ' ' + year + ', ' + "\x1B[3m" + podcast_episode + "\x1B[0m" + ', podcast, ' + date + ', viewed ' + date_viewed + ', ' '<' + url + '>.'
+            
+        return intext, reference 
+    
+    else: #passed_num == 41
+        title = input("Please enter the title of the radio programme: ")
+        year = input("Please enter the year that the radio programme was published: ")
+        broadcaster = input("Please enter the name of the broadcaster of the radio programme: ")
+        place = input("Please enter the location that the radio programme occured: ")
+        date = input("Please enter the date that the radio programme was recorded (dd mm format): ")
+        
+        intext = '(' + "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ')'
+        reference = "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ', radio programme, ' + broadcaster + ', ' + place + ', ' + date + '.'
 
+
+
+#function which creates a reference and intext reference for the user for the type of image reference that they selected 
 def image(passed_num):
-    pass
+    if passed_num == 42:
+        artists_first_name = input("Please enter the first name of the artist ")
+        artists_family_name = input("Please enter the family name of the artist: ")
+        year = input("Please enter the year that the artwork was made: ")
+        title = input("Please enter the title of the artwork: ")
+        item_type = input("Please enter the type of the item: ")
+        place = input("Please enter the location that the artwork is kept: ")
+        date = input("Please enter the date that the artwork was viewed (in dd mm year format): ")
+        
+        intext = '(' + artists_family_name + ' ' + year + ')'
+        reference = artists_family_name + ', ' + artists_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + item_type + ', ' + place + ', viewed ' + date + '.'
+        
+        return intext,reference
+        
+    elif passed_num == 43:
+        artists_first_name = input("Please enter the first name of the artist ")
+        artists_family_name = input("Please enter the family name of the artist: ")
+        year = input("Please enter the year that the artwork was made: ")
+        title = input("Please enter the title of the artwork: ")
+        medium = input("Please enter the medium that you viewed the artwork on: ")
+        website = input("Please enter the name of the website: ")
+        place = input("Please enter the location that the artwork is kept: ")
+        date = input("Please enter the date that the artwork was viewed (in dd mm year format): ")
+        url = input("Please enter the URL that was viewed which contains the artwork: ")
+        
+        intext = '(' + artists_family_name + ' ' + year + ')'
+        reference = artists_family_name + ', ' + artists_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + medium + ', ' + website + ', ' + place + ', viewed ' + date + ', ' + '<' + url + '>.'
+        
+        return intext,reference
+    
+    else: #passed_num == 44
+        authors_first_name = input("Please enter the first name of the author ")
+        authors_family_name = input("Please enter the family name of the author: ")
+        year = input("Please enter the year that the picture/graph was made: ")
+        title = input("Please enter the title of the picture/graph: ")
+        date = input("Please enter the date that the picture/graph was viewed (in dd mm year format): ")
+        url = input("Please enter the URL that was viewed which contains the picture/graph: ")
+        
+        intext = '(' + authors_family_name + ' ' + year + ')'
+        reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', viewed ' + date + ', ' + '<' + url + '>.'
+        
+        return intext,reference
 
+
+
+#function which creates a reference and intext reference for the user for a specific reference type that they selected
 def reference_types(passed_num):
-    pass 
+    if passed_num == 45:
+        title = input("Please enter the title of the Australian Bureau of Statistics (ABS) page: ")
+        year = input("Please enter the year that the ABS page was published: ")
+        catalog_number: input("Please enter the catalog number: ")
+        date = input("Please enter the date that you have viewed the ABS page: ")
+        url = input("Please enter the URL of the ABS page: ")
+        
+        intext = '(Australian Bureau of Statistics ' + year + ')'
+        reference = 'Australian Bureau of Statistics ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', cat. no. ' + catalog_number + ', ABS, viewed ' + date + '<' + url + '>.'
+        
+        return intext, reference
+        
+    elif passed_num == 46:
+        
+        choice = input("What type of personal communication is being referenced? Enter 1 for email, 2 for phone conversation, 3 for letter and 4 for interview: ")
+        if choice == 1:
+            choice = 'email'
+        elif choice == 2:
+            choice = 'phone conversation'
+        elif choice == 3:
+            choice = 'letter'
+        else: 
+            choice = 'interview'
+        authors_family_name = input("Please enter the family name of the individual on the other end of the" + choice + ': ')
+        date = input("Please enter the date that the " + choice + ' took place: ')
+        
+        intext = '(' + authors_family_name + ', ' + choice + ', ' + date + ')'
+        reference = "There is no reference required."
+        
+        return intext, reference 
+        
+    elif passed_num == 47:
+        authors_first_name = input("Please enter the first name of the lecturer: ")
+        authors_family_name = input("Please enter the family name of the lecturer: ")
+        year = input("Please enter the year that the lecture was made: ")
+        title = input("Please enter the title of the lecture: ")
+        lecture_topic = input("Please enter the name of the lecture topic: ")
+        institution = input("Please enter the name of the institution (university or otherwise) which published the lecture: ")
+        date = input("Please enter the date that the lecture was published (in dd mm year format): ")
+        
+        intext = '(' + authors_family_name + ' ' + year + ')'
+        reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "'" + title + "'" + ', lecture notes distributed in the topic ' + lecture_topic + ', ' + institution + ', on ' + date + '.' 
+        
+        
+    elif passed_num == 48:
+        intext = "The intext should follow this formatting: 'During a lecture in the topic 7052 'Electromagnetic theory and RFID applications' given at the University of Adelaide on 12 July 2010, Professor Peter Cole said ...'"
+        reference = "No reference required."
+        return intext, reference 
+    
+    elif passed_num == 49:
+        authors_first_name = input("Please enter the first name of the map maker: ")
+        authors_family_name = input("Please enter the family name of the map maker: ")
+        year = input("Please enter the year that the map was made: ")
+        title = input("Please enter the title of the map: ")
+        scale = input("Please enter the scale of the map: ")
+        publisher = input("Please enter the publisher of the map: ")
+        publisher_location = input("Please enter the publisher's location: ")
+        
+        intext = '(' + authors_family_name + ' ' + year + ')'
+        reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + scale + ', ' + publisher + ', ' + publisher_location + '.'
+        
+        return intext, reference 
+        
+    elif passed_num == 50:
+        authors_first_name = input("Please enter the first name of the patent maker: ")
+        authors_family_name = input("Please enter the family name of the patent maker: ")
+        year = input("Please enter the year that the pantent was made: ")
+        title = input("Please enter the title of the patent: ")
+        patent_details = input("Please enter the patent details (e.g., 'Australian Patent 215772'): ")
+        
+        intext = '(' + authors_family_name + ' ' + year + ')'
+        reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + patent_details + '.'
+        
+        return intext, reference       
+        
+    elif passed_num == 51:
+        authors_first_name = input("Please enter the first name of the Powerpoint: ")
+        authors_family_name = input("Please enter the family name of the Powerpoint: ")
+        year = input("Please enter the year that the Powerpoint was made: ")
+        title = input("Please enter the title of the Powerpoint: ")
+        date = input("Please enter the date that you viewed the Powerpoint: ")
+        url = input("Please enter the URL of the Powerpoint: ")
+        
+        intext = '(' + authors_family_name + ' ' + year + ')'
+        reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "'" + title + "'" + ', PowerPoint presentation, viewed ' + date + '<' + url + '>.'
+        
+        return intext, reference 
+        
+    elif passed_num == 52:
+        authors_first_name = input("Please enter the first name of the report: ")
+        authors_family_name = input("Please enter the family name of the report: ")
+        year = input("Please enter the year that the report was made: ")
+        title = input("Please enter the title of the report: ")
+        publisher = input("Please enter the publisher of the report: ")
+        publisher_location = input("Please enter the publisher's location: ")
+        
+        intext = '(' + authors_family_name + ' ' + year + ')'
+        reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "\x1B[3m" + title + "\x1B[0m" + ', ' + publisher + ', ' + publisher_location + '.'
+        
+        return intext, reference 
+        
+    elif passed_num == 53:
+        year = input("Please enter the year that the report was made: ")
+        title = input("Please enter the title of the report: ")
+        organisation = input("Please enter the name of the organisation which published the report: ")
+        publisher = input("Please enter the publisher of the report: ")
+        publisher_location = input("Please enter the publisher's location: ")
+        date = input("Please enter the date that you viewed the report: ")
+        url = input("Please enter the URL of the report: ")
+        
+        intext = '(' + "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ')'
+        reference = "\x1B[3m" + title + "\x1B[0m" + ' ' + year + ', ' + organisation + ', ' + publisher + ', ' + publisher_location + ', viewed ' + date + ', ' + '<' + url + '>.'
+        
+        return intext, reference 
+        
+    else: #passed_num == 54
+        authors_first_name = input("Please enter the first name of the report: ")
+        authors_family_name = input("Please enter the family name of the report: ")
+        year = input("Please enter the year that the report was made: ")
+        title = input("Please enter the title of the report: ")
+        thesis_type = input("Please enter the type of thesis (e.g., 'MA thesis'): ")
+        institution = input("Please enter the name of the institution (university or otherwise) which the thesis is associated with: ")
+        institution_location = input("Where is the institution located in (city): ")
+        
+        intext = '(' + authors_family_name + ' ' + year + ')'
+        reference = authors_family_name + ', ' + authors_first_name[0] + ' ' + year + ', ' + "'" + title + "'" + ', ' + thesis_type + ', ' + institution + ', ' + institution_location + '.'
+
+        return intext, reference 
 
 
 
@@ -683,9 +1187,10 @@ def word_count(cur_text):
 
 def main():
         
+        #There are 4 main features in this program. The user decides which one they would like 
         choice = '0'
-        while choice != '1' and choice != '2':
-            choice = input("Enter 1 for removing intext referencing, 2 for getting the intext and reference list version of the source (Harvard referencing style for The University of Adelaide).\n")
+        while choice != '1' and choice != '2' and choice != '3' and choice != '4':
+            choice = input("Enter 1 for removing intext referencing, 2 for getting the intext and reference list version of the source (Harvard referencing style for The University of Adelaide), 3 for generating text to speech or 4 for generating speech to text. \n")
         
         os.system('cls')
         
@@ -698,7 +1203,7 @@ def main():
             print("The old word count is: ", old_wordcount)
             print("The new word count is: ", new_wordcount)
             print("Your modified text: ", main_text)
-        else:
+        elif choice == '2':
             #journal articles
             print("Journal articles: ")
             print("1. Journal article from UofA database")
@@ -756,38 +1261,42 @@ def main():
             print("32. Blog")
             print("33. Blog post")
             print("34. Facebook post")
-            print("36. Tweet\n")
+            print("35. Tweet\n")
 
             #Audiovisual 
             print("Audiovisual: ")
-            print("37. Youtube")
-            print("38. Television broadcast")
-            print("39. Video / Film / DVD")
+            print("36. Youtube")
+            print("37. Television broadcast")
+            print("38. Video / Film / DVD")
+            print("39. Video / Film / DVD for specific episode")
             print("40. Podcast")
             print("41. Radio programme\n")
             
             #Image 
             print("Image: ")
             print("42. Artwork")
-            print("43. Picture/Graph\n")
+            print("43. Artwork viewed online")
+            print("44. Picture/Graph\n")
             
             #Other reference types
             print("Other reference types: ")
-            print("44. Australian Bureau of Statistics")
-            print("45. Emails, phone conversation, letters, interviews")
-            print("46. Lecture notes given out during a lecture")
-            print("47. Your own notes taken during a lecture")
-            print("48. Map")
-            print("49. Patent")
-            print("50. Powerpoint presentation")
-            print("51. Report")
-            print("52. Reports by organisations without a specific author")
-            print("53. Thesis\n")
+            print("45. Australian Bureau of Statistics")
+            print("46. Emails, phone conversation, letters, interviews")
+            print("47. Lecture notes given out during a lecture")
+            print("48. Your own notes taken during a lecture")
+            print("49. Map")
+            print("50. Patent")
+            print("51. Powerpoint presentation")
+            print("52. Report")
+            print("53. Reports by organisations without a specific author")
+            print("54. Thesis\n")
             
             reference_item = int(input("What type of reference do you need? Enter the number that is next to the name: \n")) 
             
             os.system('cls')
             
+            #determining what type of reference that the user has chosen and calling 
+            #the associated function 
             if 1 <= reference_item <= 7:
                 intext, reference = journal_articles(reference_item)
             elif 8 <= reference_item <= 18:
@@ -802,20 +1311,55 @@ def main():
                 intext, reference = dataset(reference_item)
             elif reference_item == 31:
                 intext, reference = webpage(reference_item)
-            elif 32 <= reference_item <= 36:
+            elif 32 <= reference_item <= 35:
                 intext, reference = social_media(reference_item)
-            elif 37 <= reference_item <= 41:
+            elif 36 <= reference_item <= 41:
                 intext, reference = audio_visual(reference_item)
-            elif 42 <= reference_item <= 43:
+            elif 42 <= reference_item <= 44:
                 intext, reference = image(reference_item)
-            else: #other reference types
+            else: #other reference types (45 to 54)
                 intext, reference = reference_types(reference_item)    
                 
                 
             os.system('cls')    
-            print("The intext reference (where x is the page number): ", intext)
-            print("The reference itself: ", reference)
+            print("The intext reference (where x is the page number if applicable): \n", intext)
+            print("The reference itself: \n", reference)
             
-            
+        elif choice == '3': 
+            user_text = input("Please enter the text that you would like to be read out for you: ")
+            language = "en"
+            gtts_object = gTTS(text=user_text, lang=language, slow=False)
+            gtts_object.save("mytext.mp3")
+            os.system("mytext.mp3")
+        else: #choice == 4
+            #getting the API key which is stored as an environment variable 
+            api_key = os.environ.get("openAI_APIKEY")
+
+            #path to the audio file (mytext.mp3)
+            audio_file_mytext = "mytext.mp3"
+
+            #URL for the OpenAI API
+            url = "https://api.openai.com/v1/audio/transcriptions"
+
+            #seting the headers which will be sent with the request (sending metadata with the request)
+            headers = {
+                "Authorization": f"Bearer {api_key}"
+            }
+
+            #opening the audio file and sending the request to OpenAI's API 
+            with open(audio_file_mytext, "rb") as audio_file: #rb stand for read binary which will read any files in binary 
+                files = {"file": audio_file}
+                data = {"model": "whisper-1"}
+                response = requests.post(url, headers=headers, files=files, data=data) #sending request to openAI's API 
+
+            #checking if the request is successful
+            if response.status_code == 200:
+                #parsing the response JSON
+                transcribed_text = response.json()["text"] #text is the key. We are accessing the value of key (API returned JSON object)
+                #outputing the transcribed text
+                print(transcribed_text)
+            else:
+                print("Error detected:", response.status_code, response.text)
+           
 main() #calls main function  
     
